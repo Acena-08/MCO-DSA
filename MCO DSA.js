@@ -1,34 +1,22 @@
-// ----------------- USERS & LOGIN ----------------------
-// Sample users for login
+// List of users with usernames and passwords
 let users = [
     { username: "user1", password: "pass1" },
     { username: "user2", password: "pass2" }
 ];
 
-// Login function
-function login(username, password) {
-    for (let i = 0; i < users.length; i++) {
-        if (users[i].username === username && users[i].password === password) {
-            return { status: "success", message: "Login successful", user: users[i] };
-        }
-    }
-    return { status: "failed", message: "Invalid credentials" };
-}
-
-// ----------------- BUS CATEGORIES ---------------------------
-// Bus data organized by category
+// Buses grouped by category with name, price, and available seats
 let buses = {
     luxury: [
-        { busName: "Luxury-21", price: 500, availableSeats: 30 },
-        { busName: "Luxury-22", price: 500, availableSeats: 30 },
-        { busName: "Luxury-23", price: 500, availableSeats: 30 },
-        { busName: "Luxury-24", price: 500, availableSeats: 30 }
+        { busName: "Luxury-21", price: 600, availableSeats: 30 },
+        { busName: "Luxury-22", price: 600, availableSeats: 30 },
+        { busName: "Luxury-23", price: 600, availableSeats: 30 },
+        { busName: "Luxury-24", price: 600, availableSeats: 30 }
     ],
-    airconditioned: [
-        { busName: "Air-Conditioned-31", price: 400, availableSeats: 30 },
-        { busName: "Air-Conditioned-32", price: 400, availableSeats: 30 },
-        { busName: "Air-Conditioned-33", price: 400, availableSeats: 30 },
-        { busName: "Air-Conditioned-34", price: 400, availableSeats: 30 }
+    aircon: [
+        { busName: "Aircon-31", price: 400, availableSeats: 30 },
+        { busName: "Aircon-32", price: 400, availableSeats: 30 },
+        { busName: "Aircon-33", price: 400, availableSeats: 30 },
+        { busName: "Aircon-34", price: 400, availableSeats: 30 }
     ],
     minibus: [
         { busName: "Mini-41", price: 300, availableSeats: 20 },
@@ -36,111 +24,176 @@ let buses = {
         { busName: "Mini-43", price: 300, availableSeats: 20 },
         { busName: "Mini-44", price: 300, availableSeats: 20 }
     ],
-    uux: [
-        { busName: "UVX-51", price: 600, availableSeats: 25 },
-        { busName: "UVX-52", price: 600, availableSeats: 25 },
-        { busName: "UVX-53", price: 600, availableSeats: 25 },
-        { busName: "UVX-54", price: 600, availableSeats: 25 }
+    uvx: [
+        { busName: "UVX-51", price: 150, availableSeats: 25 },
+        { busName: "UVX-52", price: 150, availableSeats: 25 },
+        { busName: "UVX-53", price: 150, availableSeats: 25 },
+        { busName: "UVX-54", price: 150, availableSeats: 25 }
     ]
 };
 
-// ------------------ RESERVATIONS ---------------------------
-// List to store reservations
+// This array stores all seat reservations
 let reservations = [];
 
-// Function to reserve a seat
-function reserveSeat(category, busIndex, seatNumber, name) {
+// Prompts the user for login credentials and checks them
+function login() {
+    let username = prompt("Enter username:");
+    let password = prompt("Enter password:");
+    for (let user of users) {
+        if (user.username === username && user.password === password) {
+            alert("Login successful!");
+            return username;
+        }
+    }
+    alert("Invalid credentials.");
+    return null;
+}
+
+// Lets the user pick a bus category and select a specific bus
+function chooseCategory() {
+    let category = prompt("Choose category (luxury, aircon, minibus, uux):").toLowerCase();
+    if (!buses[category]) {
+        alert("Invalid category.");
+        return null;
+    }
+
+    // Show available buses in the selected category
+    let list = "Available buses:\n";
+    buses[category].forEach((bus, i) => {
+        list += `${i + 1}. ${bus.busName} - ₱${bus.price} - Seats: ${bus.availableSeats}\n`;
+    });
+    alert(list);
+
+    // Ask the user to select a bus by number
+    let busIndex = parseInt(prompt("Choose a bus number:")) - 1;
+    if (busIndex < 0 || busIndex >= buses[category].length) {
+        alert("Invalid bus selection.");
+        return null;
+    }
+
+    return { category, busIndex };
+}
+// Reserves a seat for the logged-in user
+function reserveSeat(name, category, busIndex) {
+    let seatNumber = prompt("Enter seat number to reserve:");
     let bus = buses[category][busIndex];
 
-    // Check if user already reserved this seat
-    for (let i = 0; i < reservations.length; i++) {
-        if (
-            reservations[i].passenger === name &&
-            reservations[i].busName === bus.busName &&
-            reservations[i].seatNumber === seatNumber
-        ) {
-            return "This seat is already reserved by you.";
+    // Check if the seat is already reserved by the user
+    for (let r of reservations) {
+        if (r.passenger === name && r.busName === bus.busName && r.seatNumber === seatNumber) {
+            alert("Seat already reserved by you.");
+            return;
         }
     }
 
-    // Check seat availability
+    // Check if there are seats available
     if (bus.availableSeats <= 0) {
-        return "No available seats.";
+        alert("No seats left.");
+        return;
     }
 
-    // Add reservation
+    // Save the reservation
     reservations.push({
         passenger: name,
-        category: category,
+        category,
         busName: bus.busName,
-        seatNumber: seatNumber,
+        seatNumber,
         price: bus.price,
         paid: false,
         paymentPhoto: null
     });
 
     bus.availableSeats--;
-    return "Seat reserved successfully!";
+    alert("Seat reserved successfully!");
 }
 
-// Function to cancel reservation
-function cancelSeat(name, busName, seatNumber) {
-    for (let i = 0; i < reservations.length; i++) {
-        if (
-            reservations[i].passenger === name &&
-            reservations[i].busName === busName &&
-            reservations[i].seatNumber === seatNumber
-        ) {
-            // Remove from reservation list
-            reservations.splice(i, 1);
+// Cancels a reservation based on user's name, bus, and seat number
+function cancelSeat(name) {
+    let busName = prompt("Enter bus name to cancel:");
+    let seatNumber = prompt("Enter seat number to cancel:");
 
-            // Find the bus and restore available seat
+    for (let i = 0; i < reservations.length; i++) {
+        let r = reservations[i];
+        if (r.passenger === name && r.busName === busName && r.seatNumber === seatNumber) {
+            reservations.splice(i, 1); // Remove reservation
+
+            // Find the bus and increase its available seats
             for (let cat in buses) {
                 for (let j = 0; j < buses[cat].length; j++) {
                     if (buses[cat][j].busName === busName) {
                         buses[cat][j].availableSeats++;
-                        break;
+                        alert("Reservation canceled.");
+                        return;
                     }
                 }
             }
-            return "Reservation canceled!";
         }
     }
-    return "Reservation not found.";
+
+    alert("Reservation not found.");
 }
 
-// ------------------ PAYMENT -------------------------
-// Function to upload payment photo and mark as paid
-function makePayment(name, busName, seatNumber, paymentPhoto) {
-    for (let i = 0; i < reservations.length; i++) {
-        if (
-            reservations[i].passenger === name &&
-            reservations[i].busName === busName &&
-            reservations[i].seatNumber === seatNumber
-        ) {
-            reservations[i].paid = true;
-            reservations[i].paymentPhoto = paymentPhoto;
-            return "Payment completed and photo uploaded!";
+// Updates reservation with payment info and photo
+function makePayment(name) {
+    let busName = prompt("Enter bus name for payment:");
+    let seatNumber = prompt("Enter seat number for payment:");
+    let photo = prompt("Enter payment photo filename or URL:");
+
+    for (let r of reservations) {
+        if (r.passenger === name && r.busName === busName && r.seatNumber === seatNumber) {
+            r.paid = true;
+            r.paymentPhoto = photo;
+            alert("Payment completed.");
+            return;
         }
     }
-    return "Reservation not found for payment.";
+
+    alert("Reservation not found.");
 }
 
-// -------------------- VIEW ----------------------
-// Function to print all reservation details
+// Displays all reservations in a readable format
 function printReservations() {
     if (reservations.length === 0) {
-        console.log("No reservations yet.");
+        alert("No reservations yet.");
         return;
     }
-    for (let i = 0; i < reservations.length; i++) {
-        let r = reservations[i];
-        console.log(`Passenger: ${r.passenger}`);
-        console.log(`Bus: ${r.busName} (${r.category})`);
-        console.log(`Seat Number: ${r.seatNumber}`);
-        console.log(`Price: ₱${r.price}`);
-        console.log(`Paid: ${r.paid ? "Yes" : "No"}`);
-        console.log(`Payment Photo: ${r.paymentPhoto ? r.paymentPhoto : "None"}`);
-        console.log("-----");
+
+    let result = "";
+    reservations.forEach(r => {
+        result += `Passenger: ${r.passenger}\nBus: ${r.busName} (${r.category})\nSeat: ${r.seatNumber}\nPrice: ₱${r.price}\nPaid: ${r.paid ? "Yes" : "No"}\nPhoto: ${r.paymentPhoto || "None"}\n-----\n`;
+    });
+
+    alert(result);
+}
+
+// Controls the program flow and user choices
+function main() {
+    let user = login(); // Login first
+    if (!user) return;
+
+    // Menu loop
+    while (true) {
+        let choice = prompt(
+            "Choose an option:\n1. Reserve Seat\n2. Cancel Seat\n3. Make Payment\n4. View Reservations\n5. Exit"
+        );
+
+        if (choice === "1") {
+            let info = chooseCategory();
+            if (info) reserveSeat(user, info.category, info.busIndex);
+        } else if (choice === "2") {
+            cancelSeat(user);
+        } else if (choice === "3") {
+            makePayment(user);
+        } else if (choice === "4") {
+            printReservations();
+        } else if (choice === "5") {
+            alert("Goodbye!");
+            break;
+        } else {
+            alert("Invalid option.");
+        }
     }
 }
+
+
+main();
