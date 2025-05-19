@@ -51,7 +51,7 @@ function login() {
 
 // Lets the user pick a bus category and select a specific bus
 function chooseCategory() {
-    let category = prompt("Choose category (luxury, aircon, minibus, uux):").toLowerCase();
+    let category = prompt("Choose category (luxury, aircon, minibus, uvx):").toLowerCase();
     if (!buses[category]) {
         alert("Invalid category.");
         return null;
