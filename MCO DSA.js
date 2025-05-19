@@ -19,16 +19,16 @@ let buses = {
         { busName: "Aircon-34", price: 400, availableSeats: 30 }
     ],
     minibus: [
-        { busName: "Mini-41", price: 300, availableSeats: 20 },
-        { busName: "Mini-42", price: 300, availableSeats: 20 },
-        { busName: "Mini-43", price: 300, availableSeats: 20 },
-        { busName: "Mini-44", price: 300, availableSeats: 20 }
+        { busName: "Mini-41", price: 300, availableSeats: 25 },
+        { busName: "Mini-42", price: 300, availableSeats: 25 },
+        { busName: "Mini-43", price: 300, availableSeats: 25 },
+        { busName: "Mini-44", price: 300, availableSeats: 25 }
     ],
     uvx: [
-        { busName: "UVX-51", price: 150, availableSeats: 25 },
-        { busName: "UVX-52", price: 150, availableSeats: 25 },
-        { busName: "UVX-53", price: 150, availableSeats: 25 },
-        { busName: "UVX-54", price: 150, availableSeats: 25 }
+        { busName: "UVX-51", price: 150, availableSeats: 20 },
+        { busName: "UVX-52", price: 150, availableSeats: 20 },
+        { busName: "UVX-53", price: 150, availableSeats: 20 },
+        { busName: "UVX-54", price: 150, availableSeats: 20 }
     ]
 };
 
