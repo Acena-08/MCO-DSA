@@ -12,7 +12,7 @@ let buses = {
         { busName: "Luxury-23", price: 600, availableSeats: 30 },
         { busName: "Luxury-24", price: 600, availableSeats: 30 }
     ],
-    aircon: [
+    air-conditioned: [
         { busName: "Aircon-31", price: 400, availableSeats: 30 },
         { busName: "Aircon-32", price: 400, availableSeats: 30 },
         { busName: "Aircon-33", price: 400, availableSeats: 30 },
