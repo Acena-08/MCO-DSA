@@ -1,18 +1,18 @@
-// List of users with usernames and passwords
+// login
 let users = [
     { username: "user1", password: "pass1" },
     { username: "user2", password: "pass2" }
 ];
 
-// Buses grouped by category with name, price, and available seats
+// bus category
 let buses = {
     luxury: [
-        { busName: "Luxury-21", price: 600, availableSeats: 30 },
-        { busName: "Luxury-22", price: 600, availableSeats: 30 },
-        { busName: "Luxury-23", price: 600, availableSeats: 30 },
-        { busName: "Luxury-24", price: 600, availableSeats: 30 }
+        { busName: "Luxury-21", price: 700, availableSeats: 30 },
+        { busName: "Luxury-22", price: 700, availableSeats: 30 },
+        { busName: "Luxury-23", price: 700, availableSeats: 30 },
+        { busName: "Luxury-24", price: 700, availableSeats: 30 }
     ],
-    air-conditioned: [
+    aircon: [
         { busName: "Aircon-31", price: 400, availableSeats: 30 },
         { busName: "Aircon-32", price: 400, availableSeats: 30 },
         { busName: "Aircon-33", price: 400, availableSeats: 30 },
@@ -32,10 +32,10 @@ let buses = {
     ]
 };
 
-// This array stores all seat reservations
+// reservations
 let reservations = [];
 
-// Prompts the user for login credentials and checks them
+// login
 function login() {
     let username = prompt("Enter username:");
     let password = prompt("Enter password:");
@@ -49,36 +49,48 @@ function login() {
     return null;
 }
 
-// Lets the user pick a bus category and select a specific bus
+// choose category
 function chooseCategory() {
+    // ask user to choose a category and convert it to lowercase
     let category = prompt("Choose category (luxury, aircon, minibus, uvx):").toLowerCase();
+
+    // if the chosen category is not in the buses list, show an error
     if (!buses[category]) {
         alert("Invalid category.");
         return null;
     }
 
-    // Show available buses in the selected category
+    // create a list of available buses in the chosen category
     let list = "Available buses:\n";
     buses[category].forEach((bus, i) => {
         list += `${i + 1}. ${bus.busName} - ₱${bus.price} - Seats: ${bus.availableSeats}\n`;
     });
+
+    // show the list to the user
     alert(list);
 
-    // Ask the user to select a bus by number
+    // ask the user to choose a bus by number
     let busIndex = parseInt(prompt("Choose a bus number:")) - 1;
+
+    // check if the bus number is valid
     if (busIndex < 0 || busIndex >= buses[category].length) {
         alert("Invalid bus selection.");
         return null;
     }
 
+    // return the chosen category and bus index
     return { category, busIndex };
 }
-// Reserves a seat for the logged-in user
+
+// reserve a seat
 function reserveSeat(name, category, busIndex) {
+    // ask user to enter the seat number they want
     let seatNumber = prompt("Enter seat number to reserve:");
+
+    // get the selected bus from the list
     let bus = buses[category][busIndex];
 
-    // Check if the seat is already reserved by the user
+    // check if this seat is already reserved by the same person
     for (let r of reservations) {
         if (r.passenger === name && r.busName === bus.busName && r.seatNumber === seatNumber) {
             alert("Seat already reserved by you.");
@@ -86,13 +98,13 @@ function reserveSeat(name, category, busIndex) {
         }
     }
 
-    // Check if there are seats available
+    // if no seats left, show an alert
     if (bus.availableSeats <= 0) {
         alert("No seats left.");
         return;
     }
 
-    // Save the reservation
+    // add the reservation to the list
     reservations.push({
         passenger: name,
         category,
@@ -103,21 +115,27 @@ function reserveSeat(name, category, busIndex) {
         paymentPhoto: null
     });
 
+    // decrease the number of available seats
     bus.availableSeats--;
+
+    // show success message
     alert("Seat reserved successfully!");
 }
 
-// Cancels a reservation based on user's name, bus, and seat number
+// cancel reservation
 function cancelSeat(name) {
+    // ask for bus name and seat number to cancel
     let busName = prompt("Enter bus name to cancel:");
     let seatNumber = prompt("Enter seat number to cancel:");
 
+    // look for the matching reservation
     for (let i = 0; i < reservations.length; i++) {
         let r = reservations[i];
         if (r.passenger === name && r.busName === busName && r.seatNumber === seatNumber) {
-            reservations.splice(i, 1); // Remove reservation
+            // remove the reservation
+            reservations.splice(i, 1);
 
-            // Find the bus and increase its available seats
+            // find the bus and increase its available seats
             for (let cat in buses) {
                 for (let j = 0; j < buses[cat].length; j++) {
                     if (buses[cat][j].busName === busName) {
@@ -130,17 +148,21 @@ function cancelSeat(name) {
         }
     }
 
+    // if no matching reservation is found
     alert("Reservation not found.");
 }
 
-// Updates reservation with payment info and photo
+// make payment
 function makePayment(name) {
+    // ask user for bus name, seat number, and photo as proof of payment
     let busName = prompt("Enter bus name for payment:");
     let seatNumber = prompt("Enter seat number for payment:");
     let photo = prompt("Enter payment photo filename or URL:");
 
+    // find the matching reservation
     for (let r of reservations) {
         if (r.passenger === name && r.busName === busName && r.seatNumber === seatNumber) {
+            // mark as paid and save the payment photo
             r.paid = true;
             r.paymentPhoto = photo;
             alert("Payment completed.");
@@ -148,10 +170,11 @@ function makePayment(name) {
         }
     }
 
+    // if reservation is not found
     alert("Reservation not found.");
 }
 
-// Displays all reservations in a readable format
+// view reservations
 function printReservations() {
     if (reservations.length === 0) {
         alert("No reservations yet.");
@@ -166,12 +189,11 @@ function printReservations() {
     alert(result);
 }
 
-// Controls the program flow and user choices
+// menu where the options r made
 function main() {
-    let user = login(); // Login first
+    let user = login();
     if (!user) return;
 
-    // Menu loop
     while (true) {
         let choice = prompt(
             "Choose an option:\n1. Reserve Seat\n2. Cancel Seat\n3. Make Payment\n4. View Reservations\n5. Exit"
@@ -194,6 +216,5 @@ function main() {
         }
     }
 }
-
 
 main();
